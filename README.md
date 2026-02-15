@@ -228,6 +228,65 @@ interface Event {
 
 ---
 
+## 🔐 Authentication System
+
+### Optional Authentication Flow
+
+**Public Access (No Login):**
+- Browse all clubs
+- View club details  
+- See all events
+- Read event information
+
+**Protected Actions (Login Required):**
+- Event registration
+- Feedback submission (future)
+- Attendance marking (future)
+
+### How It Works
+
+1. **First Visit**: Users land on Clubs Home Page, can browse freely
+2. **Protected Action**: Click "Register" → Login modal appears if not authenticated
+3. **Login Flow**: Google Sign-In → Domain validation → Return to original page
+4. **Post-Login**: Can perform protected actions without prompts
+
+### Navbar States
+
+**Not Logged In:**
+```
+CampusFlow              [Login]  [Sign Up]
+```
+
+**Logged In:**
+```
+CampusFlow              [👤 John Doe ▼]
+                        ┌─────────────────┐
+                        │ John Doe        │
+                        │ john@nitj.ac.in │
+                        ├─────────────────┤
+                        │ Sign Out        │
+                        └─────────────────┘
+```
+
+### Login Required Modal
+
+When user tries to register without authentication:
+
+```
+┌─────────────────────────────────────┐
+│  Login Required                     │
+│                                     │
+│  Please login with your NITJ        │
+│  account to register for events.    │
+│                                     │
+│  [Continue with Google]  [Cancel]   │
+└─────────────────────────────────────┘
+```
+
+For detailed authentication documentation, see [OPTIONAL_AUTH_GUIDE.md](OPTIONAL_AUTH_GUIDE.md)
+
+---
+
 ## 🔥 Firebase Integration (Ready)
 
 The codebase is structured for easy Firebase integration:
@@ -341,6 +400,16 @@ npm run lint
 ---
 
 ## 🎯 Features Implemented
+
+### Optional Authentication System ✅
+- [x] Public browsing without login
+- [x] Login/Sign Up buttons in navbar (not logged in)
+- [x] User avatar/dropdown in navbar (logged in)
+- [x] Login required modal for protected actions
+- [x] Return URL after login
+- [x] Domain restriction (@nitj.ac.in only)
+- [x] Session persistence across page refreshes
+- [x] Seamless sign out
 
 ### Clubs Home Page ✅
 - [x] Responsive 4/2/1 column grid
@@ -490,6 +559,14 @@ For issues or questions:
 - Check code comments
 - Review component structure
 - Test in development mode first
+
+---
+
+## 📚 Documentation
+
+- **[README.md](README.md)** - Main project documentation (you are here)
+- **[AUTHENTICATION.md](AUTHENTICATION.md)** - Firebase authentication setup
+- **[OPTIONAL_AUTH_GUIDE.md](OPTIONAL_AUTH_GUIDE.md)** - Optional auth flow guide
 
 ---
 

@@ -5,6 +5,7 @@ import {
   User 
 } from 'firebase/auth';
 import { auth } from './firebase';
+import { createOrUpdateUserOnLogin } from './userService';
 
 // Domain restriction
 const ALLOWED_DOMAIN = '@nitj.ac.in';
@@ -51,6 +52,17 @@ export const signInWithGoogle = async (): Promise<{ success: boolean; error?: Au
       };
     }
 
+    // Create or update user profile in Firestore
+    // This will automatically assign admin role if email is devansh.cs.25@nitj.ac.in
+    try {
+      await createOrUpdateUserOnLogin(user);
+      console.log('✅ User profile created/updated successfully');
+    } catch (profileError) {
+      console.error('⚠️ Error creating/updating user profile:', profileError);
+      // Don't fail the login if profile creation fails
+      // User can still authenticate, profile can be created later
+    }
+
     return { success: true };
   } catch (error: any) {
     return {
@@ -65,9 +77,19 @@ export const signInWithGoogle = async (): Promise<{ success: boolean; error?: Au
 
 /**
  * Sign out current user
+ * Clears Firebase auth session and redirects to home
  */
 export const signOut = async (): Promise<void> => {
-  await firebaseSignOut(auth);
+  try {
+    console.log('Signing out user...');
+    await firebaseSignOut(auth);
+    console.log('Sign out successful');
+    // Session is automatically cleared by Firebase
+    // Redirect will be handled by the component calling this function
+  } catch (error) {
+    console.error('Sign out error:', error);
+    throw error;
+  }
 };
 
 /**

@@ -11,8 +11,15 @@ export default function Navbar() {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut();
-    setShowDropdown(false);
+    try {
+      setShowDropdown(false);
+      await signOut();
+      // Redirect to home page after successful logout
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      alert('Failed to sign out. Please try again.');
+    }
   };
 
   const handleLogin = () => {
@@ -22,12 +29,24 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Left: Platform Name */}
-          <div className="flex-shrink-0">
+        <div className="relative flex justify-between items-center h-16">
+          {/* Left: Platform Name + Navigation Links */}
+          <div className="flex items-center gap-8">
             <h1 className="text-xl font-semibold text-text-primary tracking-tight cursor-pointer" onClick={() => router.push('/')}>
               CampusFlow
             </h1>
+            
+            {/* Navigation Links (only when logged in) */}
+            {isAuthenticated && (
+              <div className="hidden md:flex items-center gap-6">
+                <button
+                  onClick={() => router.push('/')}
+                  className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
+                >
+                  Clubs
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right: User Profile or Login/Sign Up */}
@@ -57,7 +76,7 @@ export default function Navbar() {
 
                 {/* Dropdown Menu */}
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg py-2 animate-fade-in">
+                  <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg py-2 animate-fade-in z-50">
                     {/* User Info */}
                     <div className="px-4 py-3 border-b border-border">
                       <p className="text-sm font-medium text-text-primary">
@@ -68,10 +87,21 @@ export default function Navbar() {
                       </p>
                     </div>
 
+                    {/* Profile Link */}
+                    <button
+                      onClick={() => {
+                        setShowDropdown(false);
+                        router.push('/profile');
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-card-hover transition-colors duration-200 cursor-pointer hover:brightness-110"
+                    >
+                      View Profile
+                    </button>
+
                     {/* Sign Out Button */}
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-card-hover transition-colors duration-200"
+                      className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-card-hover transition-colors duration-200 cursor-pointer hover:brightness-110"
                     >
                       Sign Out
                     </button>
@@ -101,7 +131,7 @@ export default function Navbar() {
       {/* Click outside to close dropdown */}
       {showDropdown && (
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-40 cursor-default"
           onClick={() => setShowDropdown(false)}
         />
       )}

@@ -24,7 +24,7 @@ export default function ClubCard({ club }: ClubCardProps) {
       {/* Club Image */}
       <div className="relative aspect-square w-full overflow-hidden">
         <Image
-          src={club.imageUrl}
+          src={club.imageUrl || club.logoUrl}
           alt={club.name}
           fill
           className="object-cover transition-all duration-300 group-hover:brightness-110"
@@ -41,7 +41,7 @@ export default function ClubCard({ club }: ClubCardProps) {
           </h3>
           
           {/* Upcoming Events Badge */}
-          {club.upcomingEventsCount > 0 && (
+          {club.upcomingEventsCount && club.upcomingEventsCount > 0 && (
             <div className="inline-block">
               <span className="text-xs text-text-secondary">
                 Upcoming: {club.upcomingEventsCount} {club.upcomingEventsCount === 1 ? 'event' : 'events'}
