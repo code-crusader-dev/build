@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Event, EventStatus } from '@/types/event';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import LoginRequiredModal from './LoginRequiredModal';
 import Image from 'next/image';
 
 interface EventHorizontalCardProps {
@@ -49,6 +51,8 @@ const formatDateTime = (startTime: string, endTime: string): string => {
 
 export default function EventHorizontalCard({ event }: EventHorizontalCardProps) {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking the register button
@@ -60,15 +64,23 @@ export default function EventHorizontalCard({ event }: EventHorizontalCardProps)
 
   const handleRegisterClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // TODO: Implement registration handler
+    
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    
+    // TODO: Implement registration handler for authenticated users
     console.log(`Register for event: ${event.id}`);
   };
 
   return (
-    <div
-      onClick={handleCardClick}
-      className="group relative bg-card rounded-2xl border border-border overflow-hidden cursor-pointer transition-all duration-300 hover:bg-card-hover animate-fade-in"
-    >
+    <>
+      <div
+        onClick={handleCardClick}
+        className="group relative bg-card rounded-2xl border border-border overflow-hidden cursor-pointer transition-all duration-300 hover:bg-card-hover animate-fade-in"
+      >
       <div className="flex flex-col md:flex-row">
         {/* LEFT SIDE - Event Poster */}
         <div className="relative w-full md:w-48 h-48 md:h-48 flex-shrink-0">
@@ -160,6 +172,14 @@ export default function EventHorizontalCard({ event }: EventHorizontalCardProps)
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* Login Required Modal */}
+      <LoginRequiredModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        returnUrl={`/event/${event.id}`}
+      />
+    </>
   );
 }
